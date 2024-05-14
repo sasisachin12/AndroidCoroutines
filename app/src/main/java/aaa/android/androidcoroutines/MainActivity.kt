@@ -13,8 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import aaa.android.androidcoroutines.ui.theme.AndroidCoroutinesTheme
+import android.util.Log
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel: LoginViewModel by viewModels()
@@ -32,7 +37,35 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        getBookLists()
     }
+
+
+    private fun getBookLists() {
+        lifecycleScope.launch {
+            viewModel.getBookLists("food")
+        }
+        viewModel.articlesListLiveData.observe(this) {
+            when (it) {
+
+
+                is aaa.android.androidcoroutines.data.ResponseData.Error -> {
+                    Log.e("getBookLists: ",""+it.message )
+                }
+
+                is aaa.android.androidcoroutines.data.ResponseData.Loading -> {
+                    Log.e("getBookLists: ","Result.Loading" )
+                }
+
+                is aaa.android.androidcoroutines.data.ResponseData.Success -> {
+                    Log.e("getBookLists: "," "+it.resultsData?.size )
+
+                }
+            }
+        }
+    }
+
+
 }
 
 @Composable
@@ -50,3 +83,4 @@ fun GreetingPreview() {
         Greeting("Android")
     }
 }
+

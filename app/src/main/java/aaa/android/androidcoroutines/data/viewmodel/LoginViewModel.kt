@@ -1,8 +1,8 @@
 package aaa.android.androidcoroutines.data.viewmodel
 
 import aaa.android.androidcoroutines.data.DataRepository
+import aaa.android.androidcoroutines.data.ResponseData
 import aaa.android.androidcoroutines.data.model.Item
-import aaa.android.androidcoroutines.data.model.LoginResponse
 import aaa.android.androidcoroutines.di.modules.ApplicationScope
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -19,35 +19,34 @@ class LoginViewModel @Inject constructor(
     private val repository: DataRepository,
     @ApplicationScope private var ioScope: CoroutineScope
 ) : ViewModel() {
+    val _articlesListLiveData =
+        MutableLiveData<ResponseData<List<Item>?>>()
+    val articlesListLiveData: LiveData<ResponseData<List<Item>?>> =
+        _articlesListLiveData
 
-    fun getBookLists() {
-        val _articlesListLiveData =
-            MutableLiveData<aaa.android.androidcoroutines.data.Result<List<Item>?>>()
-        val articlesListLiveData: LiveData<aaa.android.androidcoroutines.data.Result<List<Item>?>> =
-            _articlesListLiveData
+    suspend fun getBookLists(searchText: String) {
 
-        suspend fun fetchArticlesList() {
 
+        _articlesListLiveData.apply {
+            postValue(aaa.android.androidcoroutines.data.ResponseData.Loading())
+        }
+
+        val exceptionHandler = CoroutineExceptionHandler { _, exception ->
             _articlesListLiveData.apply {
-                postValue(aaa.android.androidcoroutines.data.Result.Loading())
+                postValue(
+                    exception.message?.let {
+                        ResponseData.Error(it)
+                    }
+                )
             }
+        }
 
-            val exceptionHandler = CoroutineExceptionHandler { _, exception ->
-                _articlesListLiveData.apply {
-                    postValue(
-                        exception.message?.let {
-                            aaa.android.androidcoroutines.data.Result.Error(it)
-                        }
-                    )
-                }
-            }
-
-            viewModelScope.launch(ioScope.coroutineContext + exceptionHandler) {
-                val results = repository.getBookList()
-                _articlesListLiveData.apply {
-                    postValue(aaa.android.androidcoroutines.data.Result.Success(results))
-                }
+        viewModelScope.launch(ioScope.coroutineContext + exceptionHandler) {
+            val results = repository.getBookList(searchText)
+            _articlesListLiveData.apply {
+                postValue(ResponseData.Success(results))
             }
         }
     }
+
 }

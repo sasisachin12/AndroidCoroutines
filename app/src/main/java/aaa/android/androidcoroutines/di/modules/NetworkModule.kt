@@ -4,6 +4,8 @@ import aaa.android.androidcoroutines.data.DataRepository
 import aaa.android.androidcoroutines.di.ApiService
 import aaa.android.androidcoroutines.utils.AppConst
 import android.content.Context
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,7 +14,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
@@ -21,33 +23,26 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    @Provides
-    @Singleton
-    fun providesGsonConverterFactory(): GsonConverterFactory = GsonConverterFactory.create()
 
     @Singleton
     @Provides
     fun providesRetrofit(
-        okHttpClient: OkHttpClient,
-        gsonConverterFactory: GsonConverterFactory
-    ): Retrofit = Retrofit.Builder()
-        .baseUrl(AppConst.BOOK_BASE_URL)
-        .client(okHttpClient)
-        .addConverterFactory(gsonConverterFactory)
-        .build()
+        okHttpClient: OkHttpClient
+    ): Retrofit {
+        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+        return Retrofit.Builder().client(okHttpClient)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .baseUrl(AppConst.BOOK_BASE_URL).build()
+    }
 
     @Singleton
     @Provides
     fun providesOkHttpClient(
         customInterceptor: CustomInterceptor
     ): OkHttpClient {
-        return OkHttpClient().newBuilder()
-            .addInterceptor(customInterceptor)
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.SECONDS)
-            .callTimeout(10, TimeUnit.SECONDS)
-            .retryOnConnectionFailure(true)
-            .build()
+        return OkHttpClient().newBuilder().addInterceptor(customInterceptor)
+            .connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS)
+            .callTimeout(10, TimeUnit.SECONDS).retryOnConnectionFailure(true).build()
     }
 
     @Singleton
@@ -57,7 +52,6 @@ object NetworkModule {
     @Singleton
     @Provides
     fun providesAPIService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
-
 
 
     @Singleton

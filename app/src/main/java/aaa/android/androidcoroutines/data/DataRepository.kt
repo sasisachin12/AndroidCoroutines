@@ -16,9 +16,9 @@ class DataRepository @Inject constructor(
 ) {
 
 
-    suspend fun getBookList(): List<Item>? {
+    suspend fun getBookList(searchText:String): List<Item>? {
         return withContext(ioScope.coroutineContext) {
-            apiService.getBookList().data?.items
+            apiService.getBookList(searchText).items
         }
     }
 }
