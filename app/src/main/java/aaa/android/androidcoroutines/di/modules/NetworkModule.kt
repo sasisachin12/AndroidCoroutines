@@ -61,15 +61,6 @@ object NetworkModule {
 }
 
 
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class AuthInterceptorOkHttpClient
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class OtherInterceptorOkHttpClient
-
-
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier
 annotation class ApplicationScope

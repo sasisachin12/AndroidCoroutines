@@ -1,6 +1,9 @@
 package aaa.android.androidcoroutines.di.modules
 
+import aaa.android.androidcoroutines.R
+import aaa.android.androidcoroutines.utils.Util
 import android.content.Context
+
 
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.Interceptor
@@ -12,26 +15,26 @@ import javax.inject.Singleton
 
 @Singleton
 class CustomInterceptor @Inject constructor(@ApplicationContext private val context: Context) :
-	Interceptor {
+    Interceptor {
 
     @Throws(IOException::class)
-	override fun intercept(chain: Interceptor.Chain): Response {
-		/*if (!Util.isNetworkAvailable(context))
-			throw NoConnectivityException(context.getString(R.string.error_internet))
-*/
+    override fun intercept(chain: Interceptor.Chain): Response {
+        if (!Util.isNetworkAvailable(context))
+            throw NoConnectivityException(context.getString(R.string.no_internet))
+
         val request = chain.request()
         val url = request.url
         val queryParams = url
             .newBuilder()
-           // .addQueryParameter(AppConstant.KEY_API, BuildConfig.API_KEY)
+            // .addQueryParameter(AppConstant.KEY_API, BuildConfig.API_KEY)
             .build()
-		val requestBuilder = request
-			.newBuilder()
-			.url(queryParams)
-			.build()
-		val response = chain.proceed(requestBuilder)
+        val requestBuilder = request
+            .newBuilder()
+            .url(queryParams)
+            .build()
+        val response = chain.proceed(requestBuilder)
         return if (response.isSuccessful) response else throw UnknownException(response.message)
-	}
+    }
 }
 
 

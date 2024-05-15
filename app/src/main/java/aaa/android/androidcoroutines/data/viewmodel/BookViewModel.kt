@@ -15,11 +15,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
+class BookViewModel @Inject constructor(
     private val repository: DataRepository,
     @ApplicationScope private var ioScope: CoroutineScope
 ) : ViewModel() {
-    val _articlesListLiveData =
+    private val _articlesListLiveData =
         MutableLiveData<ResponseData<List<Item>?>>()
     val articlesListLiveData: LiveData<ResponseData<List<Item>?>> =
         _articlesListLiveData
@@ -28,7 +28,7 @@ class LoginViewModel @Inject constructor(
 
 
         _articlesListLiveData.apply {
-            postValue(aaa.android.androidcoroutines.data.ResponseData.Loading())
+            postValue(ResponseData.Loading())
         }
 
         val exceptionHandler = CoroutineExceptionHandler { _, exception ->
