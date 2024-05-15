@@ -1,7 +1,6 @@
 package aaa.android.androidcoroutines.data
 
 import aaa.android.androidcoroutines.data.model.Item
-import aaa.android.androidcoroutines.data.model.LoginResponse
 import aaa.android.androidcoroutines.di.ApiService
 import aaa.android.androidcoroutines.utils.AppConst
 import kotlinx.coroutines.CoroutineScope
