@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class Item(
+data class BookItem(
     @field:Json(name = "accessInfo")
     val accessInfo: AccessInfo? = null,
     @field:Json(name = "etag")
@@ -50,7 +50,7 @@ data class AccessInfo(
 @JsonClass(generateAdapter = true)
 data class BooKListData(
     @field:Json(name = "items")
-    val items: List<Item>? = null,
+    val items: List<BookItem>? = null,
     @field:Json(name = "kind")
     val kind: String? = null,
     @field:Json(name = "totalItems")

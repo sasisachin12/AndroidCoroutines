@@ -1,6 +1,6 @@
 package aaa.android.androidcoroutines.data
 
-import aaa.android.androidcoroutines.data.model.Item
+import aaa.android.androidcoroutines.data.model.BookItem
 import aaa.android.androidcoroutines.di.ApiService
 import aaa.android.androidcoroutines.di.modules.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
@@ -13,7 +13,7 @@ class DataRepository @Inject constructor(
 ) {
 
 
-    suspend fun getBookList(searchText:String): List<Item>? {
+    suspend fun getBookList(searchText:String): List<BookItem>? {
         return withContext(ioScope.coroutineContext) {
             apiService.getBookList(searchText).items
         }

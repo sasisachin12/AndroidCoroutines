@@ -2,8 +2,9 @@ package aaa.android.androidcoroutines.data.viewmodel
 
 import aaa.android.androidcoroutines.data.DataRepository
 import aaa.android.androidcoroutines.data.ResponseData
-import aaa.android.androidcoroutines.data.model.Item
+import aaa.android.androidcoroutines.data.model.BookItem
 import aaa.android.androidcoroutines.di.modules.ApplicationScope
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,9 +21,11 @@ class BookViewModel @Inject constructor(
     @ApplicationScope private var ioScope: CoroutineScope
 ) : ViewModel() {
     private val _articlesListLiveData =
-        MutableLiveData<ResponseData<List<Item>?>>()
-    val articlesListLiveData: LiveData<ResponseData<List<Item>?>> =
+        MutableLiveData<ResponseData<List<BookItem>?>>()
+    val articlesListLiveData: LiveData<ResponseData<List<BookItem>?>> =
         _articlesListLiveData
+
+    val categoryList = mutableStateListOf<BookItem>()
 
     suspend fun getBookLists(searchText: String) {
 
@@ -43,8 +46,10 @@ class BookViewModel @Inject constructor(
 
         viewModelScope.launch(ioScope.coroutineContext + exceptionHandler) {
             val results = repository.getBookList(searchText)
+            results?.toMutableList()?.let { categoryList.addAll(it) }
             _articlesListLiveData.apply {
                 postValue(ResponseData.Success(results))
+
             }
         }
     }
