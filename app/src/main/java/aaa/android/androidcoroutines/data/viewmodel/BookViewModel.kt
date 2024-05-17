@@ -4,7 +4,10 @@ import aaa.android.androidcoroutines.data.DataRepository
 import aaa.android.androidcoroutines.data.ResponseData
 import aaa.android.androidcoroutines.data.model.BookItem
 import aaa.android.androidcoroutines.di.modules.ApplicationScope
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,6 +29,13 @@ class BookViewModel @Inject constructor(
         _articlesListLiveData
 
     val categoryList = mutableStateListOf<BookItem>()
+    var searchValue by mutableStateOf("")
+
+
+    fun setSearchText(value: String) {
+        searchValue = value
+    }
+
 
     suspend fun getBookLists(searchText: String) {
 
