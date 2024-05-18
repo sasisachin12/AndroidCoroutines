@@ -101,7 +101,7 @@ fun GetBookList(viewModel: BookViewModel) {
                 .fillMaxWidth(),
             style = typography.titleLarge
         )
-        BasicMaterialDesign3TextField(viewModel)
+        SearchTextField(viewModel)
         SearchButton(viewModel)
         LazyColumn(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
@@ -148,7 +148,7 @@ fun BookListItem(bookItem: BookItem) {
 }
 
 @Composable
-fun BasicMaterialDesign3TextField(viewModel: BookViewModel) {
+fun SearchTextField(viewModel: BookViewModel) {
 
 
     OutlinedTextField(
