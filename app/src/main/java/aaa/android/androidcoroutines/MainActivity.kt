@@ -88,8 +88,8 @@ fun GetBookList(viewModel: BookViewModel) {
     val books = viewModel.categoryList
 
     LaunchedEffect(viewModel.searchValue) {
-      //  viewModel.getBookLists(viewModel.searchValue)
-        viewModel.getBookLists("food")
+       viewModel.getBookLists(viewModel.searchValue)
+       // viewModel.getBookLists("food")
     }
 
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
