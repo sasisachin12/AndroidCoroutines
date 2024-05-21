@@ -45,47 +45,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AndroidCoroutinesTheme {
-                setHeader(viewModel)
-                //GetBookList(viewModel)
+                SetHeaderView(viewModel)
             }
         }
-        //getBookLists()
-
     }
-
-
-    /*private fun getBookLists() {
-        lifecycleScope.launch {
-            viewModel.getBookLists("food")
-        }
-        viewModel.articlesListLiveData.observe(this) {
-            when (it) {
-
-
-                is ResponseData.Error -> {
-                    Log.e("getBookLists: ", "" + it.message)
-                }
-
-                is ResponseData.Loading -> {
-                    Log.e("getBookLists: ", "Result.Loading")
-                }
-
-                is ResponseData.Success -> {
-
-
-                    // Log.e("getBookLists: "," "+it.resultsData?.size )
-
-                    // it.resultsData?.toMutableList()?.let { it1 -> SetBooksAdapter(it1) }
-                }
-            }
-        }
-    }*/
-
 
 }
 
 @Composable
-fun setHeader(viewModel: BookViewModel) {
+fun SetHeaderView(viewModel: BookViewModel) {
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = "Type the book name and search the results from google api",
@@ -103,12 +71,11 @@ fun setHeader(viewModel: BookViewModel) {
 }
 
 @Composable
-fun display(viewModel: BookViewModel) {
+fun DisplayListView(viewModel: BookViewModel) {
     val books = viewModel.categoryList
     if (viewModel.searchDisplayValue.isNotEmpty()) {
         LaunchedEffect(viewModel.searchDisplayValue) {
             viewModel.getBookLists(viewModel.searchDisplayValue)
-            // viewModel.getBookLists("food")
         }
         LazyColumn(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
@@ -183,7 +150,7 @@ fun SearchButton(viewModel: BookViewModel) {
         modifier = Modifier.padding(4.dp),
     )
     if (openDialog.value) {
-        display(viewModel)
+        DisplayListView(viewModel)
     }
 }
 
