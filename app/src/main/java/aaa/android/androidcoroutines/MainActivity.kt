@@ -45,7 +45,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AndroidCoroutinesTheme {
-                GetBookList(viewModel)
+                setHeader(viewModel)
+                //GetBookList(viewModel)
             }
         }
         //getBookLists()
@@ -84,14 +85,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun GetBookList(viewModel: BookViewModel) {
-    val books = viewModel.categoryList
-
-    LaunchedEffect(viewModel.searchValue) {
-       viewModel.getBookLists(viewModel.searchValue)
-       // viewModel.getBookLists("food")
-    }
-
+fun setHeader(viewModel: BookViewModel) {
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = "Type the book name and search the results from google api",
@@ -103,6 +97,19 @@ fun GetBookList(viewModel: BookViewModel) {
         )
         SearchTextField(viewModel)
         SearchButton(viewModel)
+        // display(viewModel)
+    }
+
+}
+
+@Composable
+fun display(viewModel: BookViewModel) {
+    val books = viewModel.categoryList
+    if (viewModel.searchDisplayValue.isNotEmpty()) {
+        LaunchedEffect(viewModel.searchDisplayValue) {
+            viewModel.getBookLists(viewModel.searchDisplayValue)
+            // viewModel.getBookLists("food")
+        }
         LazyColumn(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
         ) {
@@ -113,7 +120,6 @@ fun GetBookList(viewModel: BookViewModel) {
                 })
         }
     }
-
 }
 
 @Composable
@@ -152,7 +158,7 @@ fun SearchTextField(viewModel: BookViewModel) {
 
 
     OutlinedTextField(
-        value = viewModel.searchValue,
+        value = viewModel.searchDisplayValue,
         onValueChange = { newText -> viewModel.setSearchText(newText) },
         singleLine = true,
         textStyle = typography.bodySmall,
@@ -166,34 +172,20 @@ fun SearchTextField(viewModel: BookViewModel) {
 @Composable
 fun SearchButton(viewModel: BookViewModel) {
     var enabled by remember { mutableStateOf(value = false) }
+    val openDialog = remember { mutableStateOf(false) }
     ElevatedButton(
         onClick = {
             enabled = true
-
+            openDialog.value = true
         },
         content = { Text("Search") },
         colors = ButtonDefaults.elevatedButtonColors(),
         modifier = Modifier.padding(4.dp),
-
-
-        )
-    if (enabled) {
-        LaunchedEffect(key1 = viewModel.searchValue) {
-            viewModel.getBookLists(viewModel.searchValue)
-        }
+    )
+    if (openDialog.value) {
+        display(viewModel)
     }
 }
 
-/*@Composable
-private fun PuppyImage(puppy: Item) {
-    Image(
-        painter = painterResource(id = puppy.volumeInfo.imageLinks.thumbnail),
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
-        modifier = Modifier
-            .padding(8.dp)
-            .size(84.dp)
-            .clip(RoundedCornerShape(corner = CornerSize(16.dp)))
-    )
-}*/
+
 

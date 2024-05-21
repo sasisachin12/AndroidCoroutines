@@ -29,11 +29,12 @@ class BookViewModel @Inject constructor(
         _articlesListLiveData
 
     val categoryList = mutableStateListOf<BookItem>()
-    var searchValue by mutableStateOf("")
+
+    var searchDisplayValue by mutableStateOf("")
 
 
     fun setSearchText(value: String) {
-        searchValue = value
+        searchDisplayValue = value
     }
 
 
@@ -53,14 +54,21 @@ class BookViewModel @Inject constructor(
                 )
             }
         }
+        try {
+            viewModelScope.launch(ioScope.coroutineContext + exceptionHandler) {
+                val results = repository.getBookList(searchText)
+                results?.toMutableList()?.let {
+                    categoryList.clear()
+                    categoryList.addAll(it)
+                }
+                _articlesListLiveData.apply {
+                    postValue(ResponseData.Success(results))
 
-        viewModelScope.launch(ioScope.coroutineContext + exceptionHandler) {
-            val results = repository.getBookList(searchText)
-            results?.toMutableList()?.let { categoryList.addAll(it) }
-            _articlesListLiveData.apply {
-                postValue(ResponseData.Success(results))
-
+                }
             }
+        } catch (e: Exception) {
+             val message=e.message.toString()
+             val message1=e.message.toString()
         }
     }
 

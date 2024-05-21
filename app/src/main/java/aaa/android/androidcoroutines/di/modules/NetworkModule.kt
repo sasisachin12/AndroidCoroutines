@@ -13,6 +13,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
@@ -37,12 +38,14 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun providesOkHttpClient(
-        customInterceptor: CustomInterceptor
-    ): OkHttpClient {
-        return OkHttpClient().newBuilder().addInterceptor(customInterceptor)
-            .connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS)
-            .callTimeout(10, TimeUnit.SECONDS).retryOnConnectionFailure(true).build()
+    fun providesOkHttpClient(): OkHttpClient {
+
+        val httpLoggingInterceptor = HttpLoggingInterceptor()
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+
+        return OkHttpClient().newBuilder().addInterceptor(httpLoggingInterceptor)
+            .connectTimeout(60, TimeUnit.SECONDS).readTimeout(60, TimeUnit.SECONDS)
+            .callTimeout(60, TimeUnit.SECONDS).retryOnConnectionFailure(true).build()
     }
 
     @Singleton
