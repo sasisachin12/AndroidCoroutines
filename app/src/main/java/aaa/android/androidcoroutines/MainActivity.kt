@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
@@ -32,7 +33,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -65,7 +69,6 @@ fun SetHeaderView(viewModel: BookViewModel) {
         )
         SearchTextField(viewModel)
         SearchButton(viewModel)
-        // display(viewModel)
     }
 
 }
@@ -109,11 +112,27 @@ fun BookListItem(bookItem: BookItem) {
                     .fillMaxWidth()
                     .align(Alignment.CenterVertically)
             ) {
+                val imageUrl = bookItem.volumeInfo?.imageLinks?.thumbnail.toString()
+                val subTitle = bookItem.volumeInfo?.subtitle.toString()
+                if (imageUrl.isNotEmpty()) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(imageUrl)
+
+                            .build(),
+                        contentDescription = "image",
+                        modifier = Modifier
+                            .size(120.dp)
+                    )
+
+                }
                 Text(text = bookItem.volumeInfo?.title.toString(), style = typography.titleLarge)
-                Text(
-                    text = bookItem.volumeInfo?.subtitle.toString(),
-                    style = typography.labelMedium
-                )
+                if (subTitle.isNotEmpty()) {
+                    Text(
+                        text = subTitle,
+                        style = typography.labelMedium
+                    )
+                }
 
             }
         }
