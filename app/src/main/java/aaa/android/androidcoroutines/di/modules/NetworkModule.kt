@@ -44,8 +44,8 @@ object NetworkModule {
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
 
         return OkHttpClient().newBuilder().addInterceptor(httpLoggingInterceptor)
-            .connectTimeout(60, TimeUnit.SECONDS).readTimeout(60, TimeUnit.SECONDS)
-            .callTimeout(60, TimeUnit.SECONDS).retryOnConnectionFailure(true).build()
+            .connectTimeout(120, TimeUnit.SECONDS).readTimeout(120, TimeUnit.SECONDS)
+            .callTimeout(120, TimeUnit.SECONDS).retryOnConnectionFailure(true).build()
     }
 
     @Singleton

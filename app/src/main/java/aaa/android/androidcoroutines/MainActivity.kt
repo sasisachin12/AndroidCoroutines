@@ -1,5 +1,6 @@
 package aaa.android.androidcoroutines
 
+import aaa.android.androidcoroutines.data.ResponseUiState
 import aaa.android.androidcoroutines.data.model.BookItem
 import aaa.android.androidcoroutines.data.viewmodel.BookViewModel
 import aaa.android.androidcoroutines.ui.theme.AndroidCoroutinesTheme
@@ -28,9 +29,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -75,21 +76,46 @@ fun SetHeaderView(viewModel: BookViewModel) {
 
 @Composable
 fun DisplayListView(viewModel: BookViewModel) {
-    val books = viewModel.categoryList
-    if (viewModel.searchDisplayValue.isNotEmpty()) {
-        LaunchedEffect(viewModel.searchDisplayValue) {
+
+    LaunchedEffect(viewModel.searchDisplayValue) {
+        if (viewModel.searchDisplayValue.isNotEmpty()) {
             viewModel.getBookLists(viewModel.searchDisplayValue)
         }
-        LazyColumn(
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            items(
-                items = books,
-                itemContent = {
-                    BookListItem(bookItem = it)
-                })
+    }
+    val items by viewModel.bookListLiveData.observeAsState()
+    when (items) {
+        is ResponseUiState.Success<*> -> {
+            val books = items?.data as List<BookItem>
+            if (books.isNotEmpty()) {
+                LazyColumn(
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    items(
+                        items = books,
+                        itemContent = {
+                            BookListItem(bookItem = it)
+                        })
+                }
+            }
+        }
+
+        is ResponseUiState.Error -> {
+
+        }
+
+        is ResponseUiState.Loading -> {
+
+        }
+
+        null -> {
+
+        }
+
+        else -> {
+
         }
     }
+
 }
 
 @Composable
@@ -141,11 +167,11 @@ fun BookListItem(bookItem: BookItem) {
 
 @Composable
 fun SearchTextField(viewModel: BookViewModel) {
-
-
     OutlinedTextField(
         value = viewModel.searchDisplayValue,
-        onValueChange = { newText -> viewModel.setSearchText(newText) },
+        onValueChange = { newText ->
+            viewModel.setSearchText(newText)
+        },
         singleLine = true,
         textStyle = typography.bodySmall,
         modifier = Modifier
@@ -157,12 +183,10 @@ fun SearchTextField(viewModel: BookViewModel) {
 
 @Composable
 fun SearchButton(viewModel: BookViewModel) {
-    var enabled by remember { mutableStateOf(value = false) }
     val openDialog = remember { mutableStateOf(false) }
     ElevatedButton(
         onClick = {
-            enabled = true
-            openDialog.value = true
+            openDialog.value = !openDialog.value
         },
         content = { Text("Search") },
         colors = ButtonDefaults.elevatedButtonColors(),

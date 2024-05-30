@@ -1,13 +1,13 @@
 package aaa.android.androidcoroutines.data.viewmodel
 
 import aaa.android.androidcoroutines.data.DataRepository
-import aaa.android.androidcoroutines.data.ResponseData
+import aaa.android.androidcoroutines.data.ResponseUiState
 import aaa.android.androidcoroutines.data.model.BookItem
 import aaa.android.androidcoroutines.di.modules.ApplicationScope
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,10 +22,9 @@ class BookViewModel @Inject constructor(
     private val repository: DataRepository,
     @ApplicationScope private var ioScope: CoroutineScope
 ) : ViewModel() {
-    private val _articlesListLiveData =
-        MutableLiveData<ResponseData<List<BookItem>?>>()
+    private val _bookListLiveData = MutableLiveData<ResponseUiState<List<BookItem>?>>()
+    val bookListLiveData: LiveData<ResponseUiState<List<BookItem>?>> = _bookListLiveData
 
-    val categoryList = mutableStateListOf<BookItem>()
 
     var searchDisplayValue by mutableStateOf("")
 
@@ -38,15 +37,15 @@ class BookViewModel @Inject constructor(
     suspend fun getBookLists(searchText: String) {
 
 
-        _articlesListLiveData.apply {
-            postValue(ResponseData.Loading())
+        _bookListLiveData.apply {
+            postValue(ResponseUiState.Loading())
         }
 
         val exceptionHandler = CoroutineExceptionHandler { _, exception ->
-            _articlesListLiveData.apply {
+            _bookListLiveData.apply {
                 postValue(
                     exception.message?.let {
-                        ResponseData.Error(it)
+                        ResponseUiState.Error(it)
                     }
                 )
             }
@@ -54,12 +53,8 @@ class BookViewModel @Inject constructor(
         try {
             viewModelScope.launch(ioScope.coroutineContext + exceptionHandler) {
                 val results = repository.getBookList(searchText)
-                results?.toMutableList()?.let {
-                    categoryList.clear()
-                    categoryList.addAll(it)
-                }
-                _articlesListLiveData.apply {
-                    postValue(ResponseData.Success(results))
+                _bookListLiveData.apply {
+                    postValue(ResponseUiState.Success(results))
 
                 }
             }
