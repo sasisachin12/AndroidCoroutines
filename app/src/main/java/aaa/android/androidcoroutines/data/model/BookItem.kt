@@ -179,7 +179,7 @@ data class VolumeInfo(
     @field:Json(name = "authors")
     val authors: List<String>? = null,
     @field:Json(name = "averageRating")
-    val averageRating: Int? = null,
+    val averageRating: Double? = null,
     @field:Json(name = "canonicalVolumeLink")
     val canonicalVolumeLink: String? = null,
     @field:Json(name = "categories")

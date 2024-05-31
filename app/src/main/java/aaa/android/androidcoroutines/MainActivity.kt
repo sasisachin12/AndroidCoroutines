@@ -5,6 +5,7 @@ import aaa.android.androidcoroutines.data.model.BookItem
 import aaa.android.androidcoroutines.data.viewmodel.BookViewModel
 import aaa.android.androidcoroutines.ui.theme.AndroidCoroutinesTheme
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -16,13 +17,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -100,11 +104,12 @@ fun DisplayListView(viewModel: BookViewModel) {
         }
 
         is ResponseUiState.Error -> {
-
+            val error = items?.message
+            Log.e("ResponseUiState.Error", "DisplayListView: $error")
         }
 
         is ResponseUiState.Loading -> {
-
+            IndeterminateCircularIndicator()
         }
 
         null -> {
@@ -195,6 +200,15 @@ fun SearchButton(viewModel: BookViewModel) {
     if (openDialog.value) {
         DisplayListView(viewModel)
     }
+}
+
+@Composable
+fun IndeterminateCircularIndicator() {
+    CircularProgressIndicator(
+        modifier = Modifier.width(64.dp),
+        color = MaterialTheme.colorScheme.secondary,
+        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+    )
 }
 
 
