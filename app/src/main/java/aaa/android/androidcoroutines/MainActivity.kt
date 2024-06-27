@@ -149,7 +149,6 @@ fun BookListItem(bookItem: BookItem) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(imageUrl)
-
                             .build(),
                         contentDescription = "image",
                         modifier = Modifier
