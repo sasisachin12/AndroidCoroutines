@@ -61,8 +61,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.7")
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.runtime.livedata)
     // hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
