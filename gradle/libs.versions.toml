@@ -1,28 +1,28 @@
 [versions]
-agp = "8.6.0-beta01"
-coilCompose = "2.0.0-rc01"
+agp = "8.7.0-alpha01"
+coilCompose = "2.6.0"
 converterGson = "2.11.0"
 converterMoshi = "2.4.0"
 hiltAndroid = "2.51.1"
 hiltNavigationCompose = "1.2.0"
-kotlin = "1.9.0"
+kotlin = "1.9.24"
 coreKtx = "1.13.1"
 junit = "4.13.2"
-junitVersion = "1.1.5"
-espressoCore = "3.5.1"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
 kotlinxCoroutinesAndroidVersion = "1.8.1"
-lifecycleRuntimeCompose = "2.8.2"
-lifecycleRuntimeKtx = "2.7.0"
+lifecycleRuntimeCompose = "2.8.3"
+lifecycleRuntimeKtx = "2.8.3"
 activityCompose = "1.9.0"
-composeBom = "2024.05.00"
+composeBom = "2024.06.00"
 loggingInterceptor = "4.12.0"
-moshi = "1.8.0"
+moshi = "1.14.0"
 moshiKotlin = "1.14.0"
 moshiKotlinCodegen = "1.8.0"
 retrofit = "2.11.0"
-runtimeLivedata = "1.6.7"
+runtimeLivedata = "1.6.8"
 runtimeLivedataVersion = "1.6.8"
-uiDesktop = "1.6.7"
+uiDesktop = "1.6.8"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -59,4 +59,5 @@ androidx-ui-desktop = { group = "androidx.compose.ui", name = "ui-desktop", vers
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+
 
