@@ -105,6 +105,7 @@ fun DisplayListView(viewModel: BookViewModel) {
 
         is ResponseUiState.Error -> {
             val error = items?.message
+            Text(text =error.toString(), style = typography.titleLarge)
             Log.e("ResponseUiState.Error", "DisplayListView: $error")
         }
 
@@ -187,16 +188,16 @@ fun SearchTextField(viewModel: BookViewModel) {
 
 @Composable
 fun SearchButton(viewModel: BookViewModel) {
-    val openDialog = remember { mutableStateOf(false) }
+    val searchValue = remember { mutableStateOf(false) }
     ElevatedButton(
         onClick = {
-            openDialog.value = !openDialog.value
+            searchValue.value = !searchValue.value
         },
         content = { Text("Search") },
         colors = ButtonDefaults.elevatedButtonColors(),
         modifier = Modifier.padding(4.dp),
     )
-    if (openDialog.value) {
+    if (searchValue.value) {
         DisplayListView(viewModel)
     }
 }
