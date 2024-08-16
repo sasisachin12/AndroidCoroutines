@@ -100,6 +100,8 @@ fun DisplayListView(viewModel: BookViewModel) {
                             BookListItem(bookItem = it)
                         })
                 }
+
+
             }
         }
 
