@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LiveData
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,7 +55,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AndroidCoroutinesTheme {
-                SetHeaderView(viewModel)
+                SetHeaderView(
+                    { viewModel.searchDisplayValue },
+                    viewModel::setSearchText,
+                    viewModel::getBookLists,
+                    {
+                        viewModel.bookListLiveData
+                    }
+                )
             }
         }
     }
@@ -62,7 +70,12 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun SetHeaderView(viewModel: BookViewModel) {
+fun SetHeaderView(
+    searchDisplayValue: () -> String,
+    onSearchTextChange: (String) -> Unit,
+    getBookList: suspend (String) -> Unit,
+    bookItems: () -> LiveData<ResponseUiState<List<BookItem>?>>
+) {
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = "Type the book name and search the results from google api",
@@ -72,21 +85,25 @@ fun SetHeaderView(viewModel: BookViewModel) {
                 .fillMaxWidth(),
             style = typography.titleLarge
         )
-        SearchTextField(viewModel)
-        SearchButton(viewModel)
+        SearchTextField(searchDisplayValue, onSearchTextChange)
+        SearchButton(searchDisplayValue, getBookList, bookItems)
     }
 
 }
 
 @Composable
-fun DisplayListView(viewModel: BookViewModel) {
+fun DisplayListView(
+    searchDisplayValue: () -> String,
+    getBookList: suspend (String) -> Unit,
+    bookItems: () -> LiveData<ResponseUiState<List<BookItem>?>>
+) {
 
-    LaunchedEffect(viewModel.searchDisplayValue) {
-        if (viewModel.searchDisplayValue.isNotEmpty()) {
-            viewModel.getBookLists(viewModel.searchDisplayValue)
+    LaunchedEffect(searchDisplayValue.invoke()) {
+        if (searchDisplayValue.invoke().isNotEmpty()) {
+            getBookList(searchDisplayValue.invoke())
         }
     }
-    val items by viewModel.bookListLiveData.observeAsState()
+    val items by bookItems.invoke().observeAsState()
     when (items) {
         is ResponseUiState.Success<*> -> {
             val books = items?.data as List<BookItem>
@@ -107,7 +124,7 @@ fun DisplayListView(viewModel: BookViewModel) {
 
         is ResponseUiState.Error -> {
             val error = items?.message
-            Text(text =error.toString(), style = typography.titleLarge)
+            Text(text = error.toString(), style = typography.titleLarge)
             Log.e("ResponseUiState.Error", "DisplayListView: $error")
         }
 
@@ -173,11 +190,11 @@ fun BookListItem(bookItem: BookItem) {
 }
 
 @Composable
-fun SearchTextField(viewModel: BookViewModel) {
+fun SearchTextField(searchDisplayValue: () -> String, onSearchTextChange: (String) -> Unit) {
     OutlinedTextField(
-        value = viewModel.searchDisplayValue,
+        value = searchDisplayValue.invoke(),
         onValueChange = { newText ->
-            viewModel.setSearchText(newText)
+            onSearchTextChange(newText)
         },
         singleLine = true,
         textStyle = typography.bodySmall,
@@ -189,7 +206,11 @@ fun SearchTextField(viewModel: BookViewModel) {
 }
 
 @Composable
-fun SearchButton(viewModel: BookViewModel) {
+fun SearchButton(
+    searchDisplayValue: () -> String,
+    getBookList: suspend (String) -> Unit,
+    bookItems: () -> LiveData<ResponseUiState<List<BookItem>?>>
+) {
     val searchValue = remember { mutableStateOf(false) }
     ElevatedButton(
         onClick = {
@@ -200,7 +221,7 @@ fun SearchButton(viewModel: BookViewModel) {
         modifier = Modifier.padding(4.dp),
     )
     if (searchValue.value) {
-        DisplayListView(viewModel)
+        DisplayListView(searchDisplayValue, getBookList, bookItems)
     }
 }
 
