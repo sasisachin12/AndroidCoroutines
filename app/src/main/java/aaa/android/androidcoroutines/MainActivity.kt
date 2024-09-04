@@ -45,6 +45,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -85,10 +86,12 @@ fun SetHeaderView(
                 .fillMaxWidth(),
             style = typography.titleLarge
         )
+
+
         SearchTextField(searchDisplayValue, onSearchTextChange)
         SearchButton(searchDisplayValue, getBookList, bookItems)
-    }
 
+    }
 }
 
 @Composable
@@ -176,7 +179,10 @@ fun BookListItem(bookItem: BookItem) {
                     )
 
                 }
-                Text(text = bookItem.volumeInfo?.title.toString(), style = typography.titleLarge)
+                Text(
+                    text = bookItem.volumeInfo?.title.toString(),
+                    style = typography.titleLarge
+                )
                 if (subTitle.isNotEmpty()) {
                     Text(
                         text = subTitle,

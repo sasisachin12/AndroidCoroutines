@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "aaa.android.androidcoroutines"
-        minSdk = 24
+        minSdk = 33
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -66,10 +66,11 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     // hilt
     implementation(libs.hilt.android)
+    implementation(libs.androidx.navigation.runtime.ktx)
     kapt(libs.hilt.android.compiler)
 
-
     implementation(libs.jetbrains.kotlinx.coroutines.android)
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
